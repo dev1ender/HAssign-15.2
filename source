@@ -1,0 +1,38 @@
+create table olympics_record
+-----------------------------
+create table olympics_record (name String,age int,country String,year int,closing_date String,sports String,gold_medals int,silver_medals int,bronze_medals int ,total_medals int) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+
+Load data into the table olympics_record
+-----------------------------
+LOAD DATA LOCAL INPATH 'olympix_data.csv' INTO TABLE olympics_record;
+
+
+create a partition table
+-------------------------
+CREATE TABLE olympics_record_partition(name String ,age int ,year int,closing_date String, sports  String ,gold_medals int ,silver_medals int ,bronze_medals int ,total_medals int) Partitoned BY (country String);
+
+load data into the partition table
+-------------------------
+INSERT OVERWRITE TABLE olympics_record_partition partition(country = 'India') select name,age, 			year,closing_date,sports,gold_medals,silver_medals, bronze_medals,total_medals FROM olympics_record WHERE country='India';
+
+
+Task1 :
+-----------------------------
+select country , SUM(gold_medals) AS Gold, SUM(silver_medals) AS Silver , SUM(bronze_medals) AS Bronze, SUM(total_medals) as Total FROM olympics_record where sports='Swimming' GROUP BY country;
+
+
+Task2:
+-----------------------------
+select year , SUM(total_medals) from olympics_record_partition group by year;
+
+Task3:
+-----------------------------
+select country ,SUM(total_medals) as Medals from olympics_record GROUP BY country;
+
+
+Task4:
+-----------------------------
+select country ,SUM(gold_medals) as Gold_Medals from olympics_record GROUP BY country;
+
+
